@@ -7,7 +7,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Link, useNavigate, useSearch } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { RefreshCw, ChevronLeft, ChevronRight, User } from 'lucide-react';
 import { fetchCharacters } from '../api/rickAndMorty';
 import { Character } from '../types/api';
