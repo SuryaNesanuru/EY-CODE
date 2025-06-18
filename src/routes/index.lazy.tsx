@@ -79,7 +79,7 @@ const columns = [
 ];
 
 export const Route = createLazyFileRoute('/')({
-  parseSearch: (search: Record<string, unknown>): { page?: number } => ({
+  validateSearch: (search): { page?: number } => ({
     page: Number(search.page) || 1,
   }),
   component: Index,
@@ -87,7 +87,7 @@ export const Route = createLazyFileRoute('/')({
 
 function Index() {
   const navigate = useNavigate({ from: '/' });
-  const { page = 1 } = useSearch<{ page?: number }>();
+  const { page = 1 } = useSearch({ from: '/' });
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const {

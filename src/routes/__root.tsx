@@ -32,7 +32,9 @@ export const Route = createRootRoute({
             </div>
           </div>
         </header>
-        <main>
+
+        <main>       
+          {undefinedVariable}
           <Outlet />
         </main>
       </div>
