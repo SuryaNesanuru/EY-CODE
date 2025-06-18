@@ -36,23 +36,21 @@ const columns = [
   }),
   columnHelper.accessor('name', {
     header: 'Name',
-    cell: (info) => <div className="font-semibold text-gray-900">{info.getValue()}</div>,
+    cell: (info) => (
+      <div className="font-semibold text-gray-900">{info.getValue()}</div>
+    ),
   }),
   columnHelper.accessor('status', {
     header: 'Status',
     cell: (info) => {
       const status = info.getValue();
-      const statusColors: Record<string, string> = {
+      const statusColors = {
         Alive: 'bg-emerald-100 text-emerald-800',
         Dead: 'bg-red-100 text-red-800',
         unknown: 'bg-gray-100 text-gray-800',
       };
       return (
-        <span
-          className={`px-2 py-1 rounded-full text-xs font-medium ${
-            statusColors[status] || 'bg-gray-100 text-gray-800'
-          }`}
-        >
+        <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[status]}`}>
           {status}
         </span>
       );
@@ -60,14 +58,17 @@ const columns = [
   }),
   columnHelper.accessor('species', {
     header: 'Species',
-    cell: (info) => <div className="text-gray-600">{info.getValue()}</div>,
+    cell: (info) => (
+      <div className="text-gray-600">{info.getValue()}</div>
+    ),
   }),
   columnHelper.accessor('gender', {
     header: 'Gender',
-    cell: (info) => <div className="text-gray-600">{info.getValue()}</div>,
+    cell: (info) => (
+      <div className="text-gray-600">{info.getValue()}</div>
+    ),
   }),
-  columnHelper.accessor((row) => row.origin.name, {
-    id: 'originName',
+  columnHelper.accessor('origin.name', {
     header: 'Origin',
     cell: (info) => (
       <div className="text-gray-600 max-w-32 truncate" title={info.getValue()}>
@@ -78,15 +79,15 @@ const columns = [
 ];
 
 export const Route = createLazyFileRoute('/')({
-  validateSearch: (search: Record<string, unknown>) => ({
-    page: typeof search.page === 'string' ? parseInt(search.page) : 1,
+  parseSearch: (search: Record<string, unknown>): { page?: number } => ({
+    page: Number(search.page) || 1,
   }),
   component: Index,
 });
 
 function Index() {
   const navigate = useNavigate({ from: '/' });
-  const { page = 1 } = useSearch({ from: '/' });
+  const { page = 1 } = useSearch<{ page?: number }>();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const {
@@ -120,7 +121,7 @@ function Index() {
     });
   };
 
-  if (error instanceof Error) {
+  if (error) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
@@ -187,7 +188,10 @@ function Index() {
                         >
                           {header.isPlaceholder
                             ? null
-                            : flexRender(header.column.columnDef.header, header.getContext())}
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
                         </th>
                       ))}
                     </tr>
@@ -198,16 +202,19 @@ function Index() {
                     <tr
                       key={row.id}
                       className="hover:bg-gray-50 cursor-pointer transition-colors"
-                      onClick={() =>
+                      onClick={() => {
                         navigate({
                           to: '/character/$id',
                           params: { id: row.original.id.toString() },
-                        })
-                      }
+                        });
+                      }}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <td key={cell.id} className="px-6 py-4 whitespace-nowrap">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )}
                         </td>
                       ))}
                     </tr>
